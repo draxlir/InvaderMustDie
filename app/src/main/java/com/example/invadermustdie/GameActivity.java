@@ -5,15 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
 public class GameActivity extends AppCompatActivity implements SensorEventListener {
 
-    private float speedX;
-    private float speedY;
     private GameView gameView;
+    private SensorManager sm = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +24,23 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
         getSupportActionBar().hide();
 
+        sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+
         gameView = new GameView(this);
         setContentView(gameView);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Sensor mAccelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sm.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onStop() {
+        sm.unregisterListener(this, sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
+        super.onStop();
     }
 
     @Override
@@ -35,8 +50,8 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
         synchronized (this) {
             if (sensor == Sensor.TYPE_ACCELEROMETER){
-                gameView.setSpeedX(values[0]);
-                gameView.setSpeedY(values[1]);
+                gameView.setSpeedX(values[1]);
+                gameView.setSpeedY(values[0]);
             }
         }
     }

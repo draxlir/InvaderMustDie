@@ -1,0 +1,47 @@
+package com.example.invadermustdie.domain;
+
+import java.util.Date;
+
+public class Score {
+    private String date;
+    private int score;
+    private int multiplier;
+
+    @Override
+    public String toString() {
+        return  date  + "  "+
+                "score=" + score + "   "+
+                "multiplier=" + multiplier
+                ;
+    }
+
+    public Score(String date, int score, int multiplier) {
+        this.date= date;
+        this.score = score;
+        this.multiplier = multiplier;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public int getMultiplier() {
+        return multiplier;
+    }
+
+    public void setMultiplier(int multiplier) {
+        this.multiplier = multiplier;
+    }
+}

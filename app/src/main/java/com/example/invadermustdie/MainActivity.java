@@ -2,6 +2,7 @@ package com.example.invadermustdie;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void clickStart(View v){
         Toast.makeText(this,"ClickedButton", Toast.LENGTH_LONG).show(); // TODO Start Game
-
+        Intent intent = new Intent(this, GameActivity.class);
+        startActivity(intent);
     }
 }

@@ -14,10 +14,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private GameDrawThread threadDraw = new GameDrawThread(getHolder(), this);
     private GameUpdateThread threadUpdate = new GameUpdateThread(getHolder(), this);
 
-    private int startX = 0;
-    private int startY = 0;
-    private int speedX = 0;
-    private int speedY = 0;
+    private float posX = 0;
+    private float posY = 0;
+    private float speedX = 0;
+    private float speedY = 0;
 
     public GameView(Context context) {
         super(context);
@@ -26,8 +26,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        speedX = (speedX + 20) % 500;
-        speedY = (speedY + 20) % 500;
+        posX = posX + speedX;
+        posY = posY + speedY ;
     }
 
     public void draw(Canvas canvas) {
@@ -41,7 +41,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawColor(Color.WHITE);
         Paint paint = new Paint();
         paint.setColor(Color.rgb(250, 0, 0));
-        canvas.drawCircle(startX + speedX, startY + speedY, 50, paint);
+        canvas.drawCircle(posX, posY, 50, paint);
     }
 
     @Override
@@ -71,5 +71,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
             retry = false;
         }
+    }
+
+    public void setSpeedX(float speedX) {
+        this.speedX = speedX;
+    }
+
+    public void setSpeedY(float speedY) {
+        this.speedY = speedY;
     }
 }

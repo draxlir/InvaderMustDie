@@ -51,7 +51,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         synchronized (this) {
             if (sensor == Sensor.TYPE_ACCELEROMETER){
                 gameView.setSpeedX(values[1]);
-                gameView.setSpeedY(values[0] - 5);
+                gameView.setSpeedY(values[0] - 4.25f);
             }
         }
     }

@@ -20,8 +20,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private GameDrawThread threadDraw = new GameDrawThread(getHolder(), this);
     private GameUpdateThread threadUpdate = new GameUpdateThread(getHolder(), this);
 
-    private float posX = 0;
-    private float posY = 0;
+    private final int SCREEN_WIDTH = this.getResources().getDisplayMetrics().widthPixels;
+    private final int SCREEN_HEIGHT = this.getResources().getDisplayMetrics().heightPixels;
+
+    private final int PLAYER_RADIUS = 40;
+
+    private double posX = SCREEN_WIDTH / 2;
+    private double posY = SCREEN_HEIGHT / 2;
     private float speedX = 0;
     private float speedY = 0;
 
@@ -45,8 +50,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        posX = posX + speedX;
-        posY = posY + speedY ;
+        double newX = posX + 5 * speedX;
+        double newY = posY + 5 * speedY;
+
+        posX = (newX >= PLAYER_RADIUS / 2 && newX <= SCREEN_WIDTH - PLAYER_RADIUS / 2)
+                ? newX
+                : nearest(PLAYER_RADIUS / 2, SCREEN_WIDTH - PLAYER_RADIUS / 2, newX) ;
+        posY = (newY >= PLAYER_RADIUS / 2 && newY <= SCREEN_HEIGHT - PLAYER_RADIUS / 2)
+                ? newY
+                : nearest(PLAYER_RADIUS / 2, SCREEN_HEIGHT - PLAYER_RADIUS / 2, newY) ;
     }
 
     public void draw(Canvas canvas) {
@@ -61,7 +73,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void drawPlayer(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.rgb(250, 0, 0));
-        canvas.drawCircle(posX, posY, 50, paint);
+        canvas.drawCircle((float) posX, (float) posY, PLAYER_RADIUS, paint);
     }
 
     public void drawEnemies(Canvas canvas) {
@@ -99,6 +111,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
             retry = false;
         }
+    }
+
+    public static int nearest(int minus, int plus, double pick) {
+        return Math.abs(minus - pick) < Math.abs(plus - pick) ? minus : plus;
     }
 
     public void setSpeedX(float speedX) {

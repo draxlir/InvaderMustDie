@@ -7,8 +7,11 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class GameActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -28,6 +31,20 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
         gameView = new GameView(this);
         setContentView(gameView);
+        gameView.setOnTouchListener(new OnSwipeTouchListener(this) {
+            public void onSwipeUp() {
+                Toast.makeText(GameActivity.this, "top", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeRight() {
+                Toast.makeText(GameActivity.this, "right", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeLeft() {
+                Toast.makeText(GameActivity.this, "left", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeDown() {
+                Toast.makeText(GameActivity.this, "bottom", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

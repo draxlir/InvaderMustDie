@@ -5,6 +5,8 @@ public class Score {
     private int score;
     private int multiplier;
 
+    private static final int addingValue = 10;
+
     @Override
     public String toString() {
         return  date  + "  "+
@@ -17,6 +19,10 @@ public class Score {
         this.date= date;
         this.score = score;
         this.multiplier = multiplier;
+    }
+
+    public void updateScore() {
+        score += addingValue*multiplier;
     }
 
     public String getDate() {

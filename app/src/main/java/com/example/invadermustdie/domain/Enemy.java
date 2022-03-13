@@ -1,20 +1,19 @@
 package com.example.invadermustdie.domain;
 
 import android.graphics.Color;
-import android.graphics.Paint;
 
 public class Enemy extends Entity{
 
     private double lifetime;
+    private int opacity = 255;
+    // imageView.setAlpha(yourValue) quand on utilisera des icones
 
     public Enemy(float x, float y, int radius) {
         super(x, y, radius);
         this.speed = 3;
         this.lifetime = 0;
-        this.color.setColor(Color.rgb(255,0,0));
+        this.color.setColor(Color.argb(opacity, 255, 0, 0));
     }
-
-
 
     public void updatePos(double playerX, double playerY) {
         float newX = 0;
@@ -34,5 +33,13 @@ public class Enemy extends Entity{
         circle.setCenter(newX, newY);
         lifetime++;
         // if lifetime > valeur, then speed increase
+    }
+
+    public void setOpacity(int opacity) {
+        this.opacity = opacity;
+    }
+
+    public void updateColor() {
+        this.color.setColor(Color.argb(opacity, 255, 0, 0));
     }
 }

@@ -37,6 +37,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private Handler mHandlerEnemySpawn = new Handler();
 
+    private int score = 0;
+    private int multiplier = 1;
+
     private Runnable mEnemySpawn= new Runnable() {
         public void run() {
             Random rnd = new Random();
@@ -77,6 +80,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         if(canvas != null) {
             drawPlayer(canvas);
             drawEnemies(canvas);
+            drawScoreAndMultiplier(canvas);
         }
     }
 
@@ -91,6 +95,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             enemy.updatePos(posX, posY);
             canvas.drawCircle(enemy.getX(), enemy.getY(), 20, enemy.getColor());
         }
+    }
+
+    public void drawScoreAndMultiplier(Canvas canvas) {
+        Paint paint = new Paint();
+        paint.setColor(Color.rgb(0,0,0));
+        paint.setTextSize(50);
+        paint.setTextAlign(Paint.Align.RIGHT);
+
+        canvas.drawText(score+" pts", SCREEN_WIDTH-150, 60, paint);
+        canvas.drawText("x"+multiplier, SCREEN_WIDTH-20, 60, paint);
     }
 
     @Override

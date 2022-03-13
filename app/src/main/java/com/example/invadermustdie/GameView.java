@@ -4,14 +4,17 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.os.Handler;
-import android.util.Pair;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.invadermustdie.domain.Circle;
 import com.example.invadermustdie.domain.Enemy;
+import com.example.invadermustdie.domain.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +29,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private final int SCREEN_HEIGHT = this.getResources().getDisplayMetrics().heightPixels;
 
     private final int PLAYER_RADIUS = 30;
+    private final int ENEMY_RADIUS = 20;
 
     private double posX = SCREEN_WIDTH / 2;
     private double posY = SCREEN_HEIGHT / 2;
@@ -34,8 +38,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private int delaySpawn = 5050;
 
     private List<Enemy> enemies = new ArrayList<>();
-
     private Handler mHandlerEnemySpawn = new Handler();
+    private Player player = new Player((float) posX, (float) posY, PLAYER_RADIUS);
 
     private int score = 0;
     private int multiplier = 1;
@@ -49,7 +53,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 enemyX = rnd.nextInt(SCREEN_HEIGHT);
                 enemyY = rnd.nextInt(SCREEN_WIDTH);
             }
-            enemies.add(new Enemy((float) enemyX, (float) enemyY));
+            enemies.add(new Enemy((float) enemyX, (float) enemyY, ENEMY_RADIUS));
             delaySpawn = delaySpawn - 50;
             mHandlerEnemySpawn.postDelayed(mEnemySpawn, Math.max(delaySpawn, 1000));
         }
@@ -63,8 +67,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        double newX = posX + 5 * speedX;
-        double newY = posY + 5 * speedY;
+        double newX = posX + player.getSpeed() * speedX;
+        double newY = posY + player.getSpeed() * speedY;
 
         posX = (newX >= PLAYER_RADIUS / 2 && newX <= SCREEN_WIDTH - PLAYER_RADIUS / 2)
                 ? newX
@@ -72,6 +76,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         posY = (newY >= PLAYER_RADIUS / 2 && newY <= SCREEN_HEIGHT - PLAYER_RADIUS / 2)
                 ? newY
                 : nearest(PLAYER_RADIUS / 2, SCREEN_HEIGHT - PLAYER_RADIUS / 2, newY) ;
+
+        player.getCircle().setCenter((float) posX, (float) posY);
     }
 
     public void draw(Canvas canvas) {
@@ -82,18 +88,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             drawEnemies(canvas);
             drawScoreAndMultiplier(canvas);
         }
+        for (Enemy enemy : enemies) {
+            if (CirclesCollisionManager.isColliding(player.getCircle(), enemy.getCircle())) {
+                System.out.println("Game over");
+            }
+        }
     }
 
     public void drawPlayer(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.rgb(0, 255, 0));
         canvas.drawCircle((float) posX, (float) posY, PLAYER_RADIUS, paint);
+
     }
 
     public void drawEnemies(Canvas canvas) {
         for(Enemy enemy : enemies) {
             enemy.updatePos(posX, posY);
-            canvas.drawCircle(enemy.getX(), enemy.getY(), 20, enemy.getColor());
+            canvas.drawCircle(enemy.getCircle().getCenter().x, enemy.getCircle().getCenter().y, ENEMY_RADIUS, enemy.getColor());
         }
     }
 

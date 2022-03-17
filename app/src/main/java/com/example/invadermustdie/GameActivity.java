@@ -115,14 +115,11 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         super.onResume();
         Sensor mAccelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sm.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        Sensor mLuminosity = sm.getDefaultSensor(Sensor.TYPE_LIGHT);
-        sm.registerListener(this, mLuminosity, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
     protected void onStop() {
         sm.unregisterListener(this, sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
-        sm.unregisterListener(this, sm.getDefaultSensor(Sensor.TYPE_LIGHT));
         audioService.stopRecording();
         super.onStop();
     }

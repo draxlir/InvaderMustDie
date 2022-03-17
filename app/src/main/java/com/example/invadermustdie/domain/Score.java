@@ -1,7 +1,5 @@
 package com.example.invadermustdie.domain;
 
-import java.util.Date;
-
 public class Score {
     private String date;
     private int score;
@@ -45,3 +43,6 @@ public class Score {
         this.multiplier = multiplier;
     }
 }
+
+
+

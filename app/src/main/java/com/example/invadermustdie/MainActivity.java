@@ -14,6 +14,8 @@ import com.example.invadermustdie.domain.Score;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,6 +43,11 @@ public class MainActivity extends AppCompatActivity {
         history.add(s3);
         history.add(s4);
         history.add(s5);
+        Collections.sort(history, new Comparator<Score>() {
+            public int compare(Score s1, Score s2) {
+                return s2.getScore() - s1.getScore();
+            }
+        });
         PersonListAdapter adapter = new PersonListAdapter(this, R.layout.row_history_layout, history);
 
         listView.setAdapter(adapter);

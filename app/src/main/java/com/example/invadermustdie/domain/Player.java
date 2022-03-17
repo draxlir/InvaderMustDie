@@ -10,5 +10,13 @@ public class Player extends Entity{
         this.speed = 5;
     }
 
+    public float getX() {
+        return circle.getCenter().x;
+    }
+
+    public float getY() {
+        return circle.getCenter().y;
+    }
+
 
 }

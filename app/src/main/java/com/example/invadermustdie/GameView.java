@@ -88,10 +88,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         for (Enemy enemy : enemies) {
             if (CirclesCollisionManager.isColliding(player.getCircle(), enemy.getCircle())) {
                 GameActivity gameActivity = (GameActivity) getContext();
+                System.out.println(gameActivity.getIsInvincible());
                 if (gameActivity.getIsInvincible()){
-                    //remove enemy and add score
+                    //add score
+                    enemies.remove(enemy);
+                    System.out.println("Kill");
                 } else {
                     //afficher gameover
+                    System.out.println("Gameover");
                 }
             }
         }
@@ -165,5 +169,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void setSpeedY(float speedY) {
         this.speedY = speedY;
+    }
+
+    public Player getPlayer() {
+        return this.player;
     }
 }

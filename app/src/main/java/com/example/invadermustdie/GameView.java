@@ -1,6 +1,8 @@
 package com.example.invadermustdie;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -8,7 +10,6 @@ import android.graphics.PointF;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -44,6 +45,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private int score = 0;
     private int multiplier = 1;
 
+    private Context mContext;
+
     private Runnable mEnemySpawn= new Runnable() {
         public void run() {
             Random rnd = new Random();
@@ -61,6 +64,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public GameView(Context context) {
         super(context);
+        this.mContext = context;
         getHolder().addCallback(this);
         setFocusable(true);
         mHandlerEnemySpawn.postDelayed(mEnemySpawn, 2000);
@@ -90,9 +94,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
         for (Enemy enemy : enemies) {
             if (CirclesCollisionManager.isColliding(player.getCircle(), enemy.getCircle())) {
-                System.out.println("Game over");
+                gameOver();
             }
         }
+    }
+
+    public void gameOver(){
+        score = 99;
+        SharedPreferences sharedPref = this.mContext.getSharedPreferences("settings",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("score", score);
+        editor.apply();
+        Intent intent = new Intent(getContext(), GameOverActivity.class);
+        mContext.startActivity(intent);
     }
 
     public void drawPlayer(Canvas canvas) {

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "873467399131",
+    "project_id": "invadermustdie",
+    "storage_bucket": "invadermustdie.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873467399131:android:3e85e50e836331941ab5fe",
+        "android_client_info": {
+          "package_name": "com.example.invadermustdie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "873467399131-frtrguobc4ds4uagf2p51d6fiqcrgikb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH7YO3r2lCqkEUIbVgfsMCaPSt1PByTLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "873467399131-frtrguobc4ds4uagf2p51d6fiqcrgikb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

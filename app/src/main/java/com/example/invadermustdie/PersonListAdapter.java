@@ -31,18 +31,15 @@ public class PersonListAdapter extends ArrayAdapter<Score> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         String date = getItem(position).getDate();
         int score = getItem(position).getScore();
-        int multiplier = getItem(position).getMultiplier();
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(myRessource, parent, false);
 
         TextView tDate = (TextView) convertView.findViewById(R.id.date);
         TextView tScore = (TextView) convertView.findViewById(R.id.score);
-        TextView tMultiplier = (TextView) convertView.findViewById(R.id.multiplier);
 
         tDate.setText(date);
         tScore.setText(String.valueOf(score));
-        tMultiplier.setText(String.valueOf(multiplier));
         return convertView;
     }
 }

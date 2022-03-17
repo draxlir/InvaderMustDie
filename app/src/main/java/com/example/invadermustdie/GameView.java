@@ -26,7 +26,9 @@ import com.example.invadermustdie.threads.GameUpdateThread;
 import com.example.invadermustdie.utils.CirclesCollisionManager;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -43,13 +45,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private float speedX = 0;
     private float speedY = 0;
 
-    private int delaySpawn = 5050;
+    private int delaySpawn = 2450;
 
     private final List<Enemy> enemies = new ArrayList<>();
     private final Handler mHandlerEnemySpawn = new Handler();
     private final Player player = new Player((SCREEN_WIDTH / 2.0f), (SCREEN_HEIGHT / 2.0f), Constants.PLAYER_RADIUS);
 
-    private final Score score = new Score(null, 0, 1);
+    private final Score score = new Score(Date.from(Instant.now()).toString(), 0, 1);
     private final Context mContext;
 
     private boolean gameOver = false;
@@ -131,7 +133,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        canvas.drawColor(Color.WHITE);
+        canvas.drawColor(Color.BLACK);
         if (gameActivity.getSpellFreeze().isActive()) {
             canvas.drawColor(Color.CYAN);
         }
@@ -177,12 +179,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void drawScoreAndMultiplier(Canvas canvas) {
         Paint paint = new Paint();
-        paint.setColor(Color.rgb(255,0,0));
+        paint.setColor(Color.WHITE);
         paint.setTextSize(Constants.SCORE_TEXT_SIZE);
         paint.setTextAlign(Paint.Align.RIGHT);
 
-        canvas.drawText(score.getScore()+" pts", SCREEN_WIDTH-20, 60, paint);
-        canvas.drawText("x"+ score.getMultiplier(), SCREEN_WIDTH-20, 120, paint);
+        canvas.drawText(score.getScore() + " pts", SCREEN_WIDTH - 20, 60, paint);
+        if(score.getMultiplier() > 1){
+            paint.setColor(Color.RED);
+        }
+        canvas.drawText("x" + score.getMultiplier(), SCREEN_WIDTH - 20, 120, paint);
     }
 
     public void drawSpells(Canvas canvas) {

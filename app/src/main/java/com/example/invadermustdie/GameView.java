@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 
 import com.example.invadermustdie.domain.Constants;
 import com.example.invadermustdie.domain.Score;
+import com.example.invadermustdie.domain.spells.Explosion;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -36,6 +37,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private final int SCREEN_WIDTH = this.getResources().getDisplayMetrics().widthPixels;
     private final int SCREEN_HEIGHT = this.getResources().getDisplayMetrics().heightPixels;
 
+    private GameActivity gameActivity;
+
     private double posX = SCREEN_WIDTH / 2.0;
     private double posY = SCREEN_HEIGHT / 2.0;
     private float speedX = 0;
@@ -50,8 +53,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private final Score score = new Score(null, 0, 1);
     private final Context mContext;
 
-    private boolean gameOver = false;  
-
+    private boolean gameOver = false;
 
     private final Runnable mEnemySpawn= new Runnable() {
 
@@ -73,6 +75,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public GameView(Context context) {
         super(context);
         this.mContext = context;
+        this.gameActivity = (GameActivity) context;
         getHolder().addCallback(this);
         setFocusable(true);
         mHandlerEnemySpawn.postDelayed(mEnemySpawn, 2000);
@@ -111,14 +114,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
         for (Enemy enemy : enemies) {
             if (CirclesCollisionManager.isColliding(player.getCircle(), enemy.getCircle())) {
-                GameActivity gameActivity = (GameActivity) getContext();
                 if (gameActivity.getSpellInvincible().getActive()){
                     //add score
                     enemies.remove(enemy);
                 } else {
                     gameOver();
                 }
-
+            }
+            if (CirclesCollisionManager.isColliding(gameActivity.getSpellExplosion().getCircle(), enemy.getCircle()) && gameActivity.getSpellExplosion().getActive()) {
+                enemies.remove(enemy);
             }
         }
     }
@@ -163,11 +167,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void drawSpells(Canvas canvas) {
-        GameActivity ga = (GameActivity) getContext();
-        if (ga.getSpellExplosion().getActive()) {
+        if (gameActivity.getSpellExplosion().getActive()) {
             Paint paint = new Paint();
             paint.setColor(Color.rgb(255, 255, 0));
-            canvas.drawCircle(ga.getSpellExplosion().getX(), ga.getSpellExplosion().getY(), 100, paint);
+            canvas.drawCircle(gameActivity.getSpellExplosion().getX(), gameActivity.getSpellExplosion().getY(), Constants.EXPLOSION_RADIUS, paint);
         }
     }
 

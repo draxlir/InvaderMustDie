@@ -19,6 +19,7 @@ import com.example.invadermustdie.domain.Constants;
 import com.example.invadermustdie.domain.spells.Explosion;
 import com.example.invadermustdie.domain.spells.Freeze;
 import com.example.invadermustdie.domain.spells.Invincible;
+import com.example.invadermustdie.domain.spells.Meteor;
 import com.example.invadermustdie.services.AudioService;
 import com.example.invadermustdie.utils.OnSwipeTouchListener;
 
@@ -31,6 +32,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     private final Invincible spellInvincible = new Invincible(Constants.INVINCIBLE_CD, Constants.INVINCIBLE_DURATION);
     private final Explosion spellExplosion = new Explosion(Constants.EXPLOSION_CD, Constants.EXPLOSION_DURATION);
     private final Freeze spellFreeze = new Freeze(Constants.FREEZE_CD, Constants.FREEZE_DURATION);
+    private final Meteor spellMeteor = new Meteor(Constants.METEOR_CD, Constants.METEOR_DURATION);
     private AudioService audioService;
 
     private boolean permissionToRecordAccepted = false;
@@ -74,14 +76,13 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         setContentView(gameView);
         gameView.setOnTouchListener(new OnSwipeTouchListener(this) {
             public void onSwipeUp() {
-                Handler handler = new Handler();
                 spellInvincible.castSpell();
             }
             public void onSwipeRight() {
-                Handler handler = new Handler();
                 spellFreeze.castSpell(gameView.getEnemies());
                }
             public void onSwipeLeft() {
+                spellMeteor.castSpell();
             }
             public void onSwipeDown() {
                 spellExplosion.castSpell(gameView.getPlayer().getX(), gameView.getPlayer().getY());

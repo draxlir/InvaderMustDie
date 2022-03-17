@@ -1,9 +1,11 @@
 package com.example.invadermustdie.domain.spells;
 
+import com.example.invadermustdie.domain.Circle;
+import com.example.invadermustdie.domain.Constants;
+
 public class Explosion extends Spell {
 
-    private float posX;
-    private float posY;
+    private Circle circle;
 
     public Explosion(int cooldown, int length) {
         super(cooldown, length);
@@ -11,17 +13,17 @@ public class Explosion extends Spell {
 
     public void castSpell(float posX, float posY) {
         if (available) {
-            this.posX = posX;
-            this.posY = posY;
+            circle = new Circle(Constants.EXPLOSION_RADIUS);
+            circle.setCenter(posX, posY);
             super.castSpell();
         }
     }
 
     public float getX() {
-        return posX;
+        return circle.getCenter().x;
     }
 
-    public float getY() {
-        return posY;
-    }
+    public float getY() { return circle.getCenter().y; }
+
+    public Circle getCircle() { return circle; }
 }

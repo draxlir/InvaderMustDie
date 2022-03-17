@@ -46,7 +46,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private int multiplier = 1;
 
     private Context mContext;
-
+  
     private Runnable mEnemySpawn= new Runnable() {
         public void run() {
             Random rnd = new Random();

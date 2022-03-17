@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         myRef.setValue(history);
+
         PersonListAdapter adapter = new PersonListAdapter(this, R.layout.row_history_layout, history);
 
         listView.setAdapter(adapter);

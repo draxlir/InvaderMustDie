@@ -10,8 +10,8 @@ import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
-import com.example.invadermustdie.domain.Enemy;
-import com.example.invadermustdie.domain.Player;
+import com.example.invadermustdie.domain.entities.Enemy;
+import com.example.invadermustdie.domain.entities.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -170,5 +170,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void setSpeedY(float speedY) {
         this.speedY = speedY;
+    }
+
+    public List<Enemy> getEnemies() {
+        return this.enemies;
     }
 }

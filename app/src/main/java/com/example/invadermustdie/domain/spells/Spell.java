@@ -1,4 +1,4 @@
-package com.example.invadermustdie.domain;
+package com.example.invadermustdie.domain.spells;
 
 public abstract class Spell {
 

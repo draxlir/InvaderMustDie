@@ -12,11 +12,16 @@ import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
-import com.example.invadermustdie.domain.Enemy;
-import com.example.invadermustdie.domain.Player;
+import com.example.invadermustdie.domain.Constants;
 import com.example.invadermustdie.domain.Score;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import com.example.invadermustdie.domain.entities.Enemy;
+import com.example.invadermustdie.domain.entities.Player;
+import com.example.invadermustdie.threads.GameDrawThread;
+import com.example.invadermustdie.threads.GameUpdateThread;
+import com.example.invadermustdie.utils.CirclesCollisionManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,42 +30,44 @@ import java.util.Random;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private GameDrawThread threadDraw = new GameDrawThread(getHolder(), this);
-    private GameUpdateThread threadUpdate = new GameUpdateThread(getHolder(), this);
+    private final GameDrawThread threadDraw = new GameDrawThread(getHolder(), this);
+    private final GameUpdateThread threadUpdate = new GameUpdateThread(getHolder(), this);
 
     private final int SCREEN_WIDTH = this.getResources().getDisplayMetrics().widthPixels;
     private final int SCREEN_HEIGHT = this.getResources().getDisplayMetrics().heightPixels;
 
-    private final int PLAYER_RADIUS = 30;
-    private final int ENEMY_RADIUS = 20;
-
-    private double posX = SCREEN_WIDTH / 2;
-    private double posY = SCREEN_HEIGHT / 2;
+    private double posX = SCREEN_WIDTH / 2.0;
+    private double posY = SCREEN_HEIGHT / 2.0;
     private float speedX = 0;
     private float speedY = 0;
+
     private int delaySpawn = 5050;
 
-    private List<Enemy> enemies = new ArrayList<>();
-    private Player player = new Player((float) posX, (float) posY, PLAYER_RADIUS);
+    private final List<Enemy> enemies = new ArrayList<>();
+    private final Handler mHandlerEnemySpawn = new Handler();
+    private final Player player = new Player((float) posX, (float) posY, Constants.PLAYER_RADIUS);
 
-    private Score score = new Score(null, 0, 1);
-    private Handler mHandlerEnemySpawn = new Handler();
+    private final Score score = new Score(null, 0, 1);
+    private final Context mContext;
+
     private Context mContext;
-    private boolean gameOver = false;
-  
+    private boolean gameOver = false;  
     private Runnable mEnemySpawn= new Runnable() {
+
+    private final Runnable mEnemySpawn= new Runnable() {
+
         @Override
         public void run() {
             Random rnd = new Random();
             double enemyX = rnd.nextInt(SCREEN_WIDTH);
             double enemyY = rnd.nextInt(SCREEN_HEIGHT);
-            while (posInRadius(enemyX, enemyY, posX, posY, SCREEN_HEIGHT/4)) {
+            while (posInRadius(enemyX, enemyY, posX, posY, SCREEN_HEIGHT / 4.0)) {
                 enemyX = rnd.nextInt(SCREEN_HEIGHT);
                 enemyY = rnd.nextInt(SCREEN_WIDTH);
             }
-            enemies.add(new Enemy((float) enemyX, (float) enemyY, ENEMY_RADIUS));
-            delaySpawn = delaySpawn - 50;
-            mHandlerEnemySpawn.postDelayed(mEnemySpawn, Math.max(delaySpawn, 1000));
+            enemies.add(new Enemy((float) enemyX, (float) enemyY, Constants.ENEMY_RADIUS));
+            delaySpawn = delaySpawn - Constants.SPAWN_ACCELERATION;
+            mHandlerEnemySpawn.postDelayed(mEnemySpawn, Math.max(delaySpawn, Constants.MIN_SPAWN_DELAY));
         }
     };
 
@@ -76,12 +83,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         double newX = posX + player.getSpeed() * speedX;
         double newY = posY + player.getSpeed() * speedY;
 
-        posX = (newX >= PLAYER_RADIUS / 2 && newX <= SCREEN_WIDTH - PLAYER_RADIUS / 2)
+        posX = (newX >= Constants.PLAYER_RADIUS / 2.0 && newX <= SCREEN_WIDTH - Constants.PLAYER_RADIUS / 2.0)
                 ? newX
-                : nearest(PLAYER_RADIUS / 2, SCREEN_WIDTH - PLAYER_RADIUS / 2, newX) ;
-        posY = (newY >= PLAYER_RADIUS / 2 && newY <= SCREEN_HEIGHT - PLAYER_RADIUS / 2)
+                : nearest(Constants.PLAYER_RADIUS / 2, SCREEN_WIDTH - Constants.PLAYER_RADIUS / 2, newX) ;
+        posY = (newY >= Constants.PLAYER_RADIUS / 2.0 && newY <= SCREEN_HEIGHT - Constants.PLAYER_RADIUS / 2.0)
                 ? newY
-                : nearest(PLAYER_RADIUS / 2, SCREEN_HEIGHT - PLAYER_RADIUS / 2, newY) ;
+                : nearest(Constants.PLAYER_RADIUS / 2, SCREEN_HEIGHT - Constants.PLAYER_RADIUS / 2, newY) ;
 
         player.getCircle().setCenter((float) posX, (float) posY);
 
@@ -98,13 +105,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
         canvas.drawColor(Color.WHITE);
         if(canvas != null) {
+            drawSpells(canvas);
             drawPlayer(canvas);
             drawEnemies(canvas);
             drawScoreAndMultiplier(canvas);
         }
         for (Enemy enemy : enemies) {
             if (CirclesCollisionManager.isColliding(player.getCircle(), enemy.getCircle())) {
-                gameOver();
+                GameActivity gameActivity = (GameActivity) getContext();
+                if (gameActivity.getSpellInvincible().getActive()){
+                    //add score
+                    enemies.remove(enemy);
+                } else {
+                    gameOver();
+                }
+
             }
         }
     }
@@ -127,24 +142,34 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void drawPlayer(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.rgb(0, 255, 0));
-        canvas.drawCircle((float) posX, (float) posY, PLAYER_RADIUS, paint);
+        canvas.drawCircle((float) posX, (float) posY, Constants.PLAYER_RADIUS, paint);
+
     }
 
     public void drawEnemies(Canvas canvas) {
         for(Enemy enemy : enemies) {
             enemy.updatePos(posX, posY);
-            canvas.drawCircle(enemy.getCircle().getCenter().x, enemy.getCircle().getCenter().y, ENEMY_RADIUS, enemy.getColor());
+            canvas.drawCircle(enemy.getCircle().getCenter().x, enemy.getCircle().getCenter().y, Constants.ENEMY_RADIUS, enemy.getColor());
         }
     }
 
     public void drawScoreAndMultiplier(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.rgb(255,0,0));
-        paint.setTextSize(50);
+        paint.setTextSize(Constants.SCORE_TEXT_SIZE);
         paint.setTextAlign(Paint.Align.RIGHT);
 
         canvas.drawText(score.getScore()+" pts", SCREEN_WIDTH-20, 60, paint);
         canvas.drawText("x"+ score.getMultiplier(), SCREEN_WIDTH-20, 120, paint);
+    }
+
+    public void drawSpells(Canvas canvas) {
+        GameActivity ga = (GameActivity) getContext();
+        if (ga.getSpellExplosion().getActive()) {
+            Paint paint = new Paint();
+            paint.setColor(Color.rgb(255, 255, 0));
+            canvas.drawCircle(ga.getSpellExplosion().getX(), ga.getSpellExplosion().getY(), 100, paint);
+        }
     }
 
     @Override
@@ -176,12 +201,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    private static int nearest(int minus, int plus, double pick) {
+    private int nearest(int minus, int plus, double pick) {
         return Math.abs(minus - pick) < Math.abs(plus - pick) ? minus : plus;
     }
 
-    private static boolean posInRadius(double posXtoCheck, double posYtoCheck, double posXRadius, double posYRadius, double radius) {
-        double distance = Math.sqrt(Math.pow(posXtoCheck-posXRadius,2) + Math.pow(posYtoCheck-posYRadius,2));
+    private boolean posInRadius(double posXtoCheck, double posYtoCheck, double posXRadius, double posYRadius, double radius) {
+        double distance = Math.sqrt(Math.pow(posXtoCheck-posXRadius, 2) + Math.pow(posYtoCheck-posYRadius, 2));
         return distance < radius;
     }
 
@@ -197,4 +222,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         score.computeMultiplierFromSoundLevel(amplitudeDb);
     }
 
+
+    public Player getPlayer() {
+        return this.player;
+    }
+
+    public List<Enemy> getEnemies() {
+        return this.enemies;
+    }
 }

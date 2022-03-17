@@ -1,8 +1,7 @@
-package com.example.invadermustdie;
+package com.example.invadermustdie.threads;
 
 import android.graphics.Canvas;
 import android.os.Handler;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.example.invadermustdie.GameView;
@@ -12,10 +11,10 @@ public class GameDrawThread extends Thread {
     private boolean running;
     private Canvas canvas;
 
-    private SurfaceHolder surfaceHolder;
-    private GameView gameView;
+    private final SurfaceHolder surfaceHolder;
+    private final GameView gameView;
 
-    private Handler mHandler = new Handler();
+    private final Handler mHandler = new Handler();
 
     public GameDrawThread(SurfaceHolder surfaceHolder, GameView gameView) {
         super();
@@ -31,7 +30,9 @@ public class GameDrawThread extends Thread {
                 synchronized(surfaceHolder) {
                     this.gameView.draw(canvas);
                 }
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             finally {
                 if (canvas != null) {
                     try {

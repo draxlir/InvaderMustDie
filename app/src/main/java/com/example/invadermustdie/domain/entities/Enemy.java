@@ -1,4 +1,4 @@
-package com.example.invadermustdie.domain;
+package com.example.invadermustdie.domain.entities;
 
 import android.graphics.Color;
 

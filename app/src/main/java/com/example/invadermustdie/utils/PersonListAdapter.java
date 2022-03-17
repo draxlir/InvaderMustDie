@@ -1,4 +1,4 @@
-package com.example.invadermustdie;
+package com.example.invadermustdie.utils;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.invadermustdie.R;
 import com.example.invadermustdie.domain.Score;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 // Display a row of the history
 public class PersonListAdapter extends ArrayAdapter<Score> {
 
-    private Context mContext;
+    private final Context mContext;
     int myRessource;
     public PersonListAdapter(@NonNull Context context, int resource, @NonNull ArrayList objects) {
         super(context, resource, objects);

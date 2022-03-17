@@ -1,4 +1,4 @@
-package com.example.invadermustdie;
+package com.example.invadermustdie.utils;
 
 import com.example.invadermustdie.domain.Circle;
 

@@ -11,9 +11,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class GameOverActivity extends AppCompatActivity {
+import java.util.Objects;
 
-    private SharedPreferences sharedPrefs;
+public class GameOverActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,9 +22,9 @@ public class GameOverActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
-        sharedPrefs = this.getSharedPreferences("settings", Context.MODE_PRIVATE);
+        SharedPreferences sharedPrefs = this.getSharedPreferences("settings", Context.MODE_PRIVATE);
         int score = sharedPrefs.getInt("score", 0);
         System.out.println(score);
 

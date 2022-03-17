@@ -1,5 +1,7 @@
 package com.example.invadermustdie.domain;
 
+import androidx.annotation.NonNull;
+
 public class Score {
     private String date;
     private int score;
@@ -7,6 +9,7 @@ public class Score {
 
     private static final int addingValue = 2;
 
+    @NonNull
     @Override
     public String toString() {
         return  date  + "  "+

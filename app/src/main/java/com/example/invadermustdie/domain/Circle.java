@@ -4,8 +4,8 @@ import android.graphics.PointF;
 
 public class Circle {
 
-    private PointF center = new PointF();
-    private int radius;
+    private final PointF center = new PointF();
+    private final int radius;
 
     public Circle (int radius) {
         this.radius = radius;

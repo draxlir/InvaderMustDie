@@ -9,25 +9,22 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.invadermustdie.domain.Score;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.example.invadermustdie.utils.PersonListAdapter;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private Context context;
@@ -37,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getSupportActionBar().hide(); // hide top bar
+        Objects.requireNonNull(getSupportActionBar()).hide(); // hide top bar
         setContentView(R.layout.activity_main);
         context = this;
         ListView listView = (ListView)findViewById(R.id.listView);
@@ -76,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
                  Log.e("error database", "onCancelled", databaseError.toException());
             }
         });
-
 
     }
 

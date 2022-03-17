@@ -1,4 +1,4 @@
-package com.example.invadermustdie.domain;
+package com.example.invadermustdie.domain.entities;
 
 import android.graphics.Color;
 
@@ -8,6 +8,14 @@ public class Player extends Entity{
         super(x, y, radius);
         this.color.setColor(Color.rgb(0, 255, 0));
         this.speed = 5;
+    }
+
+    public float getX() {
+        return circle.getCenter().x;
+    }
+
+    public float getY() {
+        return circle.getCenter().y;
     }
 
 

@@ -1,6 +1,8 @@
-package com.example.invadermustdie.domain;
+package com.example.invadermustdie.domain.entities;
 
 import android.graphics.Paint;
+
+import com.example.invadermustdie.domain.Circle;
 
 public abstract class Entity {
 
@@ -24,4 +26,6 @@ public abstract class Entity {
     public Paint getColor() {
         return color;
     }
+
+    public void setSpeed(float speed) { this.speed = speed; }
 }

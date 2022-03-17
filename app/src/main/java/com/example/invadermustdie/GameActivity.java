@@ -12,16 +12,15 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.example.invadermustdie.domain.spells.Freeze;
-import com.example.invadermustdie.domain.spells.Invincible;
+import com.example.invadermustdie.domain.Explosion;
+import com.example.invadermustdie.domain.Invincible;
 
 public class GameActivity extends AppCompatActivity implements SensorEventListener {
 
     private GameView gameView;
     private SensorManager sm = null;
-
     private Invincible spellInvincible = new Invincible(20000, 5000);
-    private Freeze spellFreeze = new Freeze(15000, 5000);
+    private Explosion spellExplosion = new Explosion(25000, 1000);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,19 +39,19 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
             public void onSwipeUp() {
                 Handler handler = new Handler();
                 spellInvincible.setInvincible(true);
+                Toast.makeText(GameActivity.this, getIsInvincible()+"", Toast.LENGTH_SHORT).show();
                 handler.postDelayed(() -> spellInvincible.setInvincible(false), spellInvincible.getLength());
             }
             public void onSwipeRight() {
-                //not working for freshly created enemy
-                Handler handler = new Handler();
-                gameView.getEnemies().forEach((enemy -> enemy.setSpeed(enemy.getSpeed() / spellFreeze.getFreezeStrength())));
-                handler.postDelayed(() -> gameView.getEnemies().forEach((enemy -> enemy.setSpeed(enemy.getSpeed() / spellFreeze.getFreezeStrength()))), spellFreeze.getLength());
+                Toast.makeText(GameActivity.this, "right", Toast.LENGTH_SHORT).show();
             }
             public void onSwipeLeft() {
                 Toast.makeText(GameActivity.this, "left", Toast.LENGTH_SHORT).show();
             }
             public void onSwipeDown() {
                 Toast.makeText(GameActivity.this, "bottom", Toast.LENGTH_SHORT).show();
+                spellExplosion.castSpell(gameView.getPlayer().getX(), gameView.getPlayer().getY());
+
             }
         });
     }

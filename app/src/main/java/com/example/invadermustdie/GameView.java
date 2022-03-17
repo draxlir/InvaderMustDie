@@ -10,8 +10,8 @@ import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
-import com.example.invadermustdie.domain.entities.Enemy;
-import com.example.invadermustdie.domain.entities.Player;
+import com.example.invadermustdie.domain.Enemy;
+import com.example.invadermustdie.domain.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,8 +92,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 if (gameActivity.getIsInvincible()){
                     //add score
                     enemies.remove(enemy);
-                    System.out.println("Mange ta mere");
-
+                    System.out.println("Kill");
                 } else {
                     //afficher gameover
                     System.out.println("Gameover");
@@ -172,7 +171,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         this.speedY = speedY;
     }
 
-    public List<Enemy> getEnemies() {
-        return this.enemies;
+    public Player getPlayer() {
+        return this.player;
     }
 }

@@ -4,15 +4,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PointF;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.example.invadermustdie.domain.Circle;
 import com.example.invadermustdie.domain.Enemy;
 import com.example.invadermustdie.domain.Player;
 
@@ -90,7 +87,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
         for (Enemy enemy : enemies) {
             if (CirclesCollisionManager.isColliding(player.getCircle(), enemy.getCircle())) {
-                System.out.println("Game over");
+                GameActivity gameActivity = (GameActivity) getContext();
+                if (gameActivity.getIsInvincible()){
+                    //remove enemy and add score
+                } else {
+                    //afficher gameover
+                }
             }
         }
     }

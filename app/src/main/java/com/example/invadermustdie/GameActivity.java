@@ -7,16 +7,18 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
+import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import com.example.invadermustdie.domain.Invincible;
 
 public class GameActivity extends AppCompatActivity implements SensorEventListener {
 
     private GameView gameView;
     private SensorManager sm = null;
+    private Invincible spellInvincible = new Invincible(20, 5);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +35,9 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         setContentView(gameView);
         gameView.setOnTouchListener(new OnSwipeTouchListener(this) {
             public void onSwipeUp() {
-                Toast.makeText(GameActivity.this, "top", Toast.LENGTH_SHORT).show();
+                Handler handler = new Handler();
+                spellInvincible.setInvincible(true);
+                handler.postDelayed(() -> spellInvincible.setInvincible(false), spellInvincible.getLength());
             }
             public void onSwipeRight() {
                 Toast.makeText(GameActivity.this, "right", Toast.LENGTH_SHORT).show();
@@ -76,5 +80,9 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
         //rien
+    }
+
+    public boolean getIsInvincible() {
+        return this.spellInvincible.isInvincible();
     }
 }

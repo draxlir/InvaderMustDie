@@ -9,4 +9,12 @@ public abstract class Spell {
         this.cooldown = cooldown;
         this.length = length;
     }
+
+    public int getCooldown() {
+        return cooldown;
+    }
+
+    public int getLength() {
+        return length;
+    }
 }

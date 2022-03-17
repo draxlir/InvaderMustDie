@@ -12,6 +12,7 @@ import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
+import com.example.invadermustdie.domain.Circle;
 import com.example.invadermustdie.domain.Constants;
 import com.example.invadermustdie.domain.Score;
 import com.example.invadermustdie.domain.spells.Explosion;
@@ -39,8 +40,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private GameActivity gameActivity;
 
-    private double posX = SCREEN_WIDTH / 2.0;
-    private double posY = SCREEN_HEIGHT / 2.0;
     private float speedX = 0;
     private float speedY = 0;
 
@@ -48,7 +47,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private final List<Enemy> enemies = new ArrayList<>();
     private final Handler mHandlerEnemySpawn = new Handler();
-    private final Player player = new Player((float) posX, (float) posY, Constants.PLAYER_RADIUS);
+    private final Player player = new Player((SCREEN_WIDTH / 2.0f), (SCREEN_HEIGHT / 2.0f), Constants.PLAYER_RADIUS);
 
     private final Score score = new Score(null, 0, 1);
     private final Context mContext;
@@ -62,7 +61,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             Random rnd = new Random();
             double enemyX = rnd.nextInt(SCREEN_WIDTH);
             double enemyY = rnd.nextInt(SCREEN_HEIGHT);
-            while (posInRadius(enemyX, enemyY, posX, posY, SCREEN_HEIGHT / 4.0)) {
+            while (posInRadius(enemyX, enemyY, player.getX(), player.getY(), SCREEN_HEIGHT / 4.0)) {
                 enemyX = rnd.nextInt(SCREEN_HEIGHT);
                 enemyY = rnd.nextInt(SCREEN_WIDTH);
             }
@@ -82,17 +81,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        double newX = posX + player.getSpeed() * speedX;
-        double newY = posY + player.getSpeed() * speedY;
+        double newX = player.getX() + player.getSpeed() * speedX;
+        double newY = player.getY() + player.getSpeed() * speedY;
 
-        posX = (newX >= Constants.PLAYER_RADIUS / 2.0 && newX <= SCREEN_WIDTH - Constants.PLAYER_RADIUS / 2.0)
+        newX = (newX >= Constants.PLAYER_RADIUS / 2.0 && newX <= SCREEN_WIDTH - Constants.PLAYER_RADIUS / 2.0)
                 ? newX
                 : nearest(Constants.PLAYER_RADIUS / 2, SCREEN_WIDTH - Constants.PLAYER_RADIUS / 2, newX) ;
-        posY = (newY >= Constants.PLAYER_RADIUS / 2.0 && newY <= SCREEN_HEIGHT - Constants.PLAYER_RADIUS / 2.0)
+        newY = (newY >= Constants.PLAYER_RADIUS / 2.0 && newY <= SCREEN_HEIGHT - Constants.PLAYER_RADIUS / 2.0)
                 ? newY
                 : nearest(Constants.PLAYER_RADIUS / 2, SCREEN_HEIGHT - Constants.PLAYER_RADIUS / 2, newY) ;
 
-        player.getCircle().setCenter((float) posX, (float) posY);
+        player.getCircle().setCenter((float) newX, (float) newY);
 
         score.updateScore();
         double multiplier = score.getMultiplier();
@@ -106,6 +105,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         canvas.drawColor(Color.WHITE);
+        if (gameActivity.getSpellFreeze().getActive()) {
+            canvas.drawColor(Color.CYAN);
+        }
         if(canvas != null) {
             drawSpells(canvas);
             drawPlayer(canvas);
@@ -123,6 +125,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
             if (CirclesCollisionManager.isColliding(gameActivity.getSpellExplosion().getCircle(), enemy.getCircle()) && gameActivity.getSpellExplosion().getActive()) {
                 enemies.remove(enemy);
+            }
+            if (gameActivity.getSpellMeteor().getActive()) {
+                for (Circle meteor : gameActivity.getSpellMeteor().getMeteors()) {
+                    if (CirclesCollisionManager.isColliding(meteor, enemy.getCircle())) {
+                        enemies.remove(enemy);
+                    }
+                }
             }
         }
     }
@@ -145,13 +154,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void drawPlayer(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.rgb(0, 255, 0));
-        canvas.drawCircle((float) posX, (float) posY, Constants.PLAYER_RADIUS, paint);
+        if (gameActivity.getSpellInvincible().getActive()) {
+            paint.setColor(Color.rgb(255, 150, 150));
+        }
+        canvas.drawCircle(player.getX(), player.getY(), Constants.PLAYER_RADIUS, paint);
 
     }
 
     public void drawEnemies(Canvas canvas) {
         for(Enemy enemy : enemies) {
-            enemy.updatePos(posX, posY);
+            enemy.updatePos(player.getX(), player.getY());
             canvas.drawCircle(enemy.getCircle().getCenter().x, enemy.getCircle().getCenter().y, Constants.ENEMY_RADIUS, enemy.getColor());
         }
     }
@@ -171,6 +183,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             Paint paint = new Paint();
             paint.setColor(Color.rgb(255, 255, 0));
             canvas.drawCircle(gameActivity.getSpellExplosion().getX(), gameActivity.getSpellExplosion().getY(), Constants.EXPLOSION_RADIUS, paint);
+        }
+        if (gameActivity.getSpellMeteor().getActive()) {
+            Paint paint = new Paint();
+            paint.setColor(Color.rgb(120,120,40));
+            for (Circle meteor : gameActivity.getSpellMeteor().getMeteors()) {
+                canvas.drawCircle(meteor.getCenter().x, meteor.getCenter().y, Constants.METEOR_RADIUS, paint);
+                meteor.setCenter(meteor.getCenter().x - Constants.METEOR_SPEED, meteor.getCenter().y + Constants.METEOR_SPEED);
+            }
         }
     }
 
@@ -231,5 +251,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public List<Enemy> getEnemies() {
         return this.enemies;
+    }
+
+
+    public int getSCREEN_WIDTH() {
+        return SCREEN_WIDTH;
+    }
+
+    public int getSCREEN_HEIGHT() {
+        return SCREEN_HEIGHT;
     }
 }

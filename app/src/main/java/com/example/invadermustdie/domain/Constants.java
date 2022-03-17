@@ -16,13 +16,15 @@ public final class Constants {
 
     public static final int EXPLOSION_CD = 25000;
     public static final int EXPLOSION_DURATION = 1000;
-    public static final int EXPLOSION_RADIUS = 400;
+    public static final int EXPLOSION_RADIUS = 300;
 
     public static final int INVINCIBLE_CD = 30000;
     public static final int INVINCIBLE_DURATION = 5000;
 
     public static final int METEOR_CD = 30000;
-    public static final int METEOR_DURATION = 3000;
+    public static final int METEOR_DURATION = 7000;
+    public static final int METEOR_RADIUS = 100;
+    public static final int METEOR_SPEED = 12;
 
     public static final int SPAWN_ACCELERATION = 50;
     public static final int MIN_SPAWN_DELAY = 200;

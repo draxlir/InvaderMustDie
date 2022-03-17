@@ -22,6 +22,8 @@ public abstract class Spell {
         return available;
     }
 
+    public int getCooldown() { return cooldown; }
+
     public void castSpell() {
         if (available) {
             available = false;

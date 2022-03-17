@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.example.invadermustdie.domain.Constants;
 import com.example.invadermustdie.domain.spells.Explosion;
@@ -76,15 +77,31 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         setContentView(gameView);
         gameView.setOnTouchListener(new OnSwipeTouchListener(this) {
             public void onSwipeUp() {
+                //temp
+                if (!spellInvincible.getAvailable()) {
+                    Toast.makeText(GameActivity.this, "In cooldown", Toast.LENGTH_SHORT).show();
+                }
                 spellInvincible.castSpell();
             }
             public void onSwipeRight() {
+                //temp
+                if (!spellFreeze.getAvailable()) {
+                    Toast.makeText(GameActivity.this, "In cooldown", Toast.LENGTH_SHORT).show();
+                }
                 spellFreeze.castSpell(gameView.getEnemies());
-               }
+            }
             public void onSwipeLeft() {
-                spellMeteor.castSpell();
+                //temp
+                if (!spellMeteor.getAvailable()) {
+                    Toast.makeText(GameActivity.this, "In cooldown", Toast.LENGTH_SHORT).show();
+                }
+                spellMeteor.castSpell(gameView.getSCREEN_HEIGHT(), gameView.getSCREEN_WIDTH());
             }
             public void onSwipeDown() {
+                //temp
+                if (!spellExplosion.getAvailable()) {
+                    Toast.makeText(GameActivity.this, "In cooldown", Toast.LENGTH_SHORT).show();
+                }
                 spellExplosion.castSpell(gameView.getPlayer().getX(), gameView.getPlayer().getY());
             }
         });
@@ -134,6 +151,14 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     public Invincible getSpellInvincible() {
         return spellInvincible;
+    }
+
+    public Freeze getSpellFreeze() {
+        return spellFreeze;
+    }
+
+    public Meteor getSpellMeteor() {
+        return spellMeteor;
     }
 
     @Override

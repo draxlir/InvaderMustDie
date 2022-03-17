@@ -28,7 +28,7 @@ Des outils lui sont offerts pour l'aider à survivre dans ce milieu hostile : il
 
 - Accéléromètre pour déplacer le personnage dans la zone
 - Microphone pour augmenter pendant une courte durée le multiplicateur de score (tant qu'il n'est pas revenu à 1 le joueur ne peut pas utiliser cet outil)
-- Touch screen pour obtenir temporairement des pouvoirs : swipe vers le haut pour devenir invincible pendant une courte période, swipe vers le bas pour neutraliser les ennemis autour de lui, swipe vers la gauche pour faire apparaître des météorites et enfin swipe vers la droite pour temporairement empâcher les ennemis de bouger
+- Touch screen pour obtenir temporairement des pouvoirs : swipe vers le haut pour devenir invincible pendant une courte période, swipe vers le bas pour neutraliser les ennemis autour de lui, swipe vers la gauche pour faire apparaître des météorites et enfin swipe vers la droite pour temporairement ralentir les ennemis
 
 # Git et méthodologie 
 

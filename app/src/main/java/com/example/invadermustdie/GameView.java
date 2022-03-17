@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import com.example.invadermustdie.domain.Enemy;
 import com.example.invadermustdie.domain.Player;
 import com.example.invadermustdie.domain.Score;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Score score = new Score(null, 0, 1);
     private Handler mHandlerEnemySpawn = new Handler();
     private Context mContext;
+    private boolean gameOver = false;
   
     private Runnable mEnemySpawn= new Runnable() {
         @Override
@@ -107,12 +110,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void gameOver(){
-        SharedPreferences sharedPref = this.mContext.getSharedPreferences("settings",Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt("score", score.getScore());
-        editor.apply();
-        Intent intent = new Intent(getContext(), GameOverActivity.class);
-        mContext.startActivity(intent);
+        if(!gameOver){
+            gameOver = true;
+            FirebaseDatabase database = FirebaseDatabase.getInstance("https://invadermustdie-default-rtdb.europe-west1.firebasedatabase.app/");
+            DatabaseReference myRef = database.getReference("scores");
+            myRef.push().setValue(score);
+            SharedPreferences sharedPref = this.mContext.getSharedPreferences("settings",Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putInt("score", score.getScore());
+            editor.apply();
+            Intent intent = new Intent(getContext(), GameOverActivity.class);
+            mContext.startActivity(intent);
+        }
     }
 
     public void drawPlayer(Canvas canvas) {

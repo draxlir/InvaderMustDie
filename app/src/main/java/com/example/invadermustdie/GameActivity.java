@@ -51,7 +51,6 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
             public void onSwipeDown() {
                 Toast.makeText(GameActivity.this, "bottom", Toast.LENGTH_SHORT).show();
                 spellExplosion.castSpell(gameView.getPlayer().getX(), gameView.getPlayer().getY());
-
             }
         });
     }
@@ -85,6 +84,14 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
         //rien
+    }
+
+    public Invincible getSpellInvincible() {
+        return this.spellInvincible;
+    }
+
+    public Explosion getSpellExplosion() {
+        return this.spellExplosion;
     }
 
     public boolean getIsInvincible() {

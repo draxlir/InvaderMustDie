@@ -18,7 +18,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     private GameView gameView;
     private SensorManager sm = null;
-    private Invincible spellInvincible = new Invincible(20, 5);
+    private Invincible spellInvincible = new Invincible(20000, 5000);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,9 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
             public void onSwipeUp() {
                 Handler handler = new Handler();
                 spellInvincible.setInvincible(true);
-                handler.postDelayed(() -> spellInvincible.setInvincible(false), spellInvincible.getLength());
+
+                Toast.makeText(GameActivity.this, getIsInvincible() + "", Toast.LENGTH_SHORT).show();
+                handler.postDelayed(() -> spellInvincible.setInvincible(false), spellInvincible.getLength() );
             }
             public void onSwipeRight() {
                 Toast.makeText(GameActivity.this, "right", Toast.LENGTH_SHORT).show();

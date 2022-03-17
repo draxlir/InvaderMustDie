@@ -81,6 +81,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
         canvas.drawColor(Color.WHITE);
         if(canvas != null) {
+            drawSpells(canvas);
             drawPlayer(canvas);
             drawEnemies(canvas);
             drawScoreAndMultiplier(canvas);
@@ -123,6 +124,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         canvas.drawText(score+" pts", SCREEN_WIDTH-150, 60, paint);
         canvas.drawText("x"+multiplier, SCREEN_WIDTH-20, 60, paint);
+    }
+
+    public void drawSpells(Canvas canvas) {
+        GameActivity ga = (GameActivity) getContext();
+        if (ga.getSpellExplosion().getActive()) {
+            Paint paint = new Paint();
+            paint.setColor(Color.rgb(255, 255, 0));
+            canvas.drawCircle(ga.getSpellExplosion().getX(), ga.getSpellExplosion().getY(), 100, paint);
+        }
     }
 
     @Override

@@ -1,7 +1,5 @@
 package com.example.invadermustdie.domain;
 
-import android.os.Handler;
-
 public class Explosion extends Spell {
 
     private float posX;
@@ -15,12 +13,15 @@ public class Explosion extends Spell {
         if (available) {
             this.posX = posX;
             this.posY = posY;
-            available = false;
-            active = true;
-            Handler cd = new Handler();
-            cd.postDelayed(() -> available = true, cooldown);
-            Handler le = new Handler();
-            le.postDelayed(() -> active = false, length);
+            super.castSpell();
         }
+    }
+
+    public float getX() {
+        return posX;
+    }
+
+    public float getY() {
+        return posY;
     }
 }

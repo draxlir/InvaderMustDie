@@ -16,6 +16,9 @@ import com.example.invadermustdie.domain.Constants;
 import com.example.invadermustdie.domain.Score;
 import com.example.invadermustdie.domain.entities.Enemy;
 import com.example.invadermustdie.domain.entities.Player;
+import com.example.invadermustdie.threads.GameDrawThread;
+import com.example.invadermustdie.threads.GameUpdateThread;
+import com.example.invadermustdie.utils.CirclesCollisionManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -24,38 +27,39 @@ import java.util.Random;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private GameDrawThread threadDraw = new GameDrawThread(getHolder(), this);
-    private GameUpdateThread threadUpdate = new GameUpdateThread(getHolder(), this);
+    private final GameDrawThread threadDraw = new GameDrawThread(getHolder(), this);
+    private final GameUpdateThread threadUpdate = new GameUpdateThread(getHolder(), this);
 
     private final int SCREEN_WIDTH = this.getResources().getDisplayMetrics().widthPixels;
     private final int SCREEN_HEIGHT = this.getResources().getDisplayMetrics().heightPixels;
 
-    private double posX = SCREEN_WIDTH / 2;
-    private double posY = SCREEN_HEIGHT / 2;
+    private double posX = SCREEN_WIDTH / 2.0;
+    private double posY = SCREEN_HEIGHT / 2.0;
     private float speedX = 0;
     private float speedY = 0;
+
     private int delaySpawn = 5050;
 
-    private List<Enemy> enemies = new ArrayList<>();
-    private Handler mHandlerEnemySpawn = new Handler();
-    private Player player = new Player((float) posX, (float) posY, Constants.PLAYER_RADIUS);
+    private final List<Enemy> enemies = new ArrayList<>();
+    private final Handler mHandlerEnemySpawn = new Handler();
+    private final Player player = new Player((float) posX, (float) posY, Constants.PLAYER_RADIUS);
 
-    private Score score = new Score(null, 0, 1);
-    private Context mContext;
+    private final Score score = new Score(null, 0, 1);
+    private final Context mContext;
 
-    private Runnable mEnemySpawn= new Runnable() {
+    private final Runnable mEnemySpawn= new Runnable() {
         @Override
         public void run() {
             Random rnd = new Random();
             double enemyX = rnd.nextInt(SCREEN_WIDTH);
             double enemyY = rnd.nextInt(SCREEN_HEIGHT);
-            while (posInRadius(enemyX, enemyY, posX, posY, SCREEN_HEIGHT/4)) {
+            while (posInRadius(enemyX, enemyY, posX, posY, SCREEN_HEIGHT / 4.0)) {
                 enemyX = rnd.nextInt(SCREEN_HEIGHT);
                 enemyY = rnd.nextInt(SCREEN_WIDTH);
             }
             enemies.add(new Enemy((float) enemyX, (float) enemyY, Constants.ENEMY_RADIUS));
-            delaySpawn = delaySpawn - 50;
-            mHandlerEnemySpawn.postDelayed(mEnemySpawn, Math.max(delaySpawn, 1000));
+            delaySpawn = delaySpawn - Constants.SPAWN_ACCELERATION;
+            mHandlerEnemySpawn.postDelayed(mEnemySpawn, Math.max(delaySpawn, Constants.MIN_SPAWN_DELAY));
         }
     };
 
@@ -71,10 +75,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         double newX = posX + player.getSpeed() * speedX;
         double newY = posY + player.getSpeed() * speedY;
 
-        posX = (newX >= Constants.PLAYER_RADIUS / 2 && newX <= SCREEN_WIDTH - Constants.PLAYER_RADIUS / 2)
+        posX = (newX >= Constants.PLAYER_RADIUS / 2.0 && newX <= SCREEN_WIDTH - Constants.PLAYER_RADIUS / 2.0)
                 ? newX
                 : nearest(Constants.PLAYER_RADIUS / 2, SCREEN_WIDTH - Constants.PLAYER_RADIUS / 2, newX) ;
-        posY = (newY >= Constants.PLAYER_RADIUS / 2 && newY <= SCREEN_HEIGHT - Constants.PLAYER_RADIUS / 2)
+        posY = (newY >= Constants.PLAYER_RADIUS / 2.0 && newY <= SCREEN_HEIGHT - Constants.PLAYER_RADIUS / 2.0)
                 ? newY
                 : nearest(Constants.PLAYER_RADIUS / 2, SCREEN_HEIGHT - Constants.PLAYER_RADIUS / 2, newY) ;
 
@@ -101,7 +105,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         for (Enemy enemy : enemies) {
             if (CirclesCollisionManager.isColliding(player.getCircle(), enemy.getCircle())) {
                 GameActivity gameActivity = (GameActivity) getContext();
-                System.out.println(gameActivity.getSpellInvincible().getActive());
                 if (gameActivity.getSpellInvincible().getActive()){
                     //add score
                     enemies.remove(enemy);
@@ -139,7 +142,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void drawScoreAndMultiplier(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.rgb(255,0,0));
-        paint.setTextSize(50);
+        paint.setTextSize(Constants.SCORE_TEXT_SIZE);
         paint.setTextAlign(Paint.Align.RIGHT);
 
         canvas.drawText(score.getScore()+" pts", SCREEN_WIDTH-20, 60, paint);
@@ -184,12 +187,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    private static int nearest(int minus, int plus, double pick) {
+    private int nearest(int minus, int plus, double pick) {
         return Math.abs(minus - pick) < Math.abs(plus - pick) ? minus : plus;
     }
 
-    private static boolean posInRadius(double posXtoCheck, double posYtoCheck, double posXRadius, double posYRadius, double radius) {
-        double distance = Math.sqrt(Math.pow(posXtoCheck-posXRadius,2) + Math.pow(posYtoCheck-posYRadius,2));
+    private boolean posInRadius(double posXtoCheck, double posYtoCheck, double posXRadius, double posYRadius, double radius) {
+        double distance = Math.sqrt(Math.pow(posXtoCheck-posXRadius, 2) + Math.pow(posYtoCheck-posYRadius, 2));
         return distance < radius;
     }
 
@@ -210,5 +213,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return this.player;
     }
 
-    public List<Enemy> getEnemies() { return this.enemies; }
+    public List<Enemy> getEnemies() {
+        return this.enemies;
+    }
 }

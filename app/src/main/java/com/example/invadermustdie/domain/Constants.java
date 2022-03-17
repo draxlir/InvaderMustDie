@@ -11,6 +11,7 @@ public final class Constants {
 
     public static final int FREEZE_CD = 15000;
     public static final int FREEZE_DURATION = 5000;
+    public static final int FREEZE_STRENGTH = 2;
 
     public static final int EXPLOSION_CD = 25000;
     public static final int EXPLOSION_DURATION = 1000;
@@ -20,4 +21,17 @@ public final class Constants {
 
     public static final int METEORS_CD = 30000;
     public static final int METEORS_DURATION = 3000;
+
+    public static final int SPAWN_ACCELERATION = 50;
+    public static final int MIN_SPAWN_DELAY = 1000;
+
+    public static final int SCORE_TEXT_SIZE = 50;
+
+    public static final String AUDIO_FILE = "/audiorecordtest.3gp";
+
+    public static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+
+    public static final int AMPLITUDE_CHECK_PERIOD = 1000;
+
+    public static final float ACCELEROMETER_OFFSET = 4.25f;
 }

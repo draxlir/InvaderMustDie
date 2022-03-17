@@ -14,14 +14,6 @@ public abstract class Spell {
         this.length = length;
     }
 
-    public int getCooldown() {
-        return cooldown;
-    }
-
-    public int getLength() {
-        return length;
-    }
-
     public boolean getActive() {
         return active;
     }

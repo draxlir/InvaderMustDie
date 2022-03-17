@@ -6,42 +6,38 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.example.invadermustdie.domain.Constants;
 import com.example.invadermustdie.domain.spells.Explosion;
 import com.example.invadermustdie.domain.spells.Freeze;
 import com.example.invadermustdie.domain.spells.Invincible;
+import com.example.invadermustdie.services.AudioService;
+import com.example.invadermustdie.utils.OnSwipeTouchListener;
 
-import java.io.IOException;
+import java.util.Objects;
 
 public class GameActivity extends AppCompatActivity implements SensorEventListener {
 
     private GameView gameView;
     private SensorManager sm = null;
-    private Invincible spellInvincible = new Invincible(Constants.INVINCIBLE_CD, Constants.INVINCIBLE_DURATION);
-    private Explosion spellExplosion = new Explosion(Constants.EXPLOSION_CD, Constants.EXPLOSION_DURATION);
-    private Freeze spellFreeze = new Freeze(Constants.FREEZE_CD, Constants.FREEZE_DURATION);
+    private final Invincible spellInvincible = new Invincible(Constants.INVINCIBLE_CD, Constants.INVINCIBLE_DURATION);
+    private final Explosion spellExplosion = new Explosion(Constants.EXPLOSION_CD, Constants.EXPLOSION_DURATION);
+    private final Freeze spellFreeze = new Freeze(Constants.FREEZE_CD, Constants.FREEZE_DURATION);
     private AudioService audioService;
 
-    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private boolean permissionToRecordAccepted = false;
-    private String [] permissions = {Manifest.permission.RECORD_AUDIO};
+    private final String [] permissions = {Manifest.permission.RECORD_AUDIO};
 
-    private static String fileName = null;
-
-    private Handler mHandler = new Handler();
-    private Runnable rTask = new Runnable() {
+    private final Handler mHandler = new Handler();
+    private final Runnable rTask = new Runnable() {
         @Override
         public void run() {
             runOnUiThread(() -> {
@@ -51,7 +47,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                     gameView.setSoundLevel(amplitudeDb);
                 }
             });
-            mHandler.postDelayed(this, 1000);
+            mHandler.postDelayed(this, Constants.AMPLITUDE_CHECK_PERIOD);
         }
     };
 
@@ -59,18 +55,18 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        fileName = getExternalCacheDir().getAbsolutePath();
-        fileName += "/audiorecordtest.3gp";
+        String fileName = getExternalCacheDir().getAbsolutePath();
+        fileName += Constants.AUDIO_FILE;
 
         audioService = new AudioService(fileName);
 
-        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+        ActivityCompat.requestPermissions(this, permissions, Constants.REQUEST_RECORD_AUDIO_PERMISSION);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                  WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         sm = (SensorManager) getSystemService(SENSOR_SERVICE);
 
@@ -86,17 +82,14 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 spellFreeze.castSpell(gameView.getEnemies());
                }
             public void onSwipeLeft() {
-                Toast.makeText(GameActivity.this, "left", Toast.LENGTH_SHORT).show();
             }
             public void onSwipeDown() {
-                Toast.makeText(GameActivity.this, "bottom", Toast.LENGTH_SHORT).show();
                 spellExplosion.castSpell(gameView.getPlayer().getX(), gameView.getPlayer().getY());
-
             }
         });
 
         audioService.startRecording();
-        mHandler.postDelayed(rTask, 1000);
+        mHandler.postDelayed(rTask, Constants.AMPLITUDE_CHECK_PERIOD);
     }
 
     @Override
@@ -124,14 +117,14 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         synchronized (this) {
             if (sensor == Sensor.TYPE_ACCELEROMETER){
                 gameView.setSpeedX(values[1]);
-                gameView.setSpeedY(values[0] - 4.25f);
+                gameView.setSpeedY(values[0] - Constants.ACCELEROMETER_OFFSET);
             }
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
-        //rien
+        //nothing
     }
 
     public Explosion getSpellExplosion() {
@@ -145,10 +138,8 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
-            case REQUEST_RECORD_AUDIO_PERMISSION:
-                permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                break;
+        if (requestCode == Constants.REQUEST_RECORD_AUDIO_PERMISSION) {
+            permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
         }
         if (!permissionToRecordAccepted) finish();
     }

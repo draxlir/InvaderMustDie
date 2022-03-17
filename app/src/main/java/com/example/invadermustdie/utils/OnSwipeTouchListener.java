@@ -1,4 +1,4 @@
-package com.example.invadermustdie;
+package com.example.invadermustdie.utils;
 
 import android.content.Context;
 import android.view.GestureDetector;

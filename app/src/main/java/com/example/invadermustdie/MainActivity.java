@@ -7,21 +7,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.invadermustdie.domain.Score;
+import com.example.invadermustdie.utils.PersonListAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getSupportActionBar().hide(); // hide top bar
+        Objects.requireNonNull(getSupportActionBar()).hide(); // hide top bar
         setContentView(R.layout.activity_main);
 
         ListView listView = (ListView)findViewById(R.id.listView);
@@ -58,11 +54,7 @@ public class MainActivity extends AppCompatActivity {
         history.add(s3);
         history.add(s4);
         history.add(s5);
-        Collections.sort(history, new Comparator<Score>() {
-            public int compare(Score s1, Score s2) {
-                return s2.getScore() - s1.getScore();
-            }
-        });
+        history.sort((Score a, Score b) -> b.getScore() - a.getScore());
 
         myRef.setValue(history);
 

@@ -6,17 +6,17 @@ import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PointF;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
-import com.example.invadermustdie.domain.Circle;
 import com.example.invadermustdie.domain.Enemy;
 import com.example.invadermustdie.domain.Player;
+import com.example.invadermustdie.domain.Score;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -39,15 +39,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private int delaySpawn = 5050;
 
     private List<Enemy> enemies = new ArrayList<>();
-    private Handler mHandlerEnemySpawn = new Handler();
     private Player player = new Player((float) posX, (float) posY, PLAYER_RADIUS);
 
-    private int score = 0;
-    private int multiplier = 1;
-
+    private Score score = new Score(null, 0, 1);
+    private Handler mHandlerEnemySpawn = new Handler();
     private Context mContext;
   
     private Runnable mEnemySpawn= new Runnable() {
+        @Override
         public void run() {
             Random rnd = new Random();
             double enemyX = rnd.nextInt(SCREEN_WIDTH);
@@ -82,6 +81,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 : nearest(PLAYER_RADIUS / 2, SCREEN_HEIGHT - PLAYER_RADIUS / 2, newY) ;
 
         player.getCircle().setCenter((float) posX, (float) posY);
+
+        score.updateScore();
+        double multiplier = score.getMultiplier();
+        if(multiplier > 1) {
+            BigDecimal bd = new BigDecimal(multiplier);
+            BigDecimal bd2 = new BigDecimal("0.01");
+            score.setMultiplier((double) Math.round(bd.subtract(bd2).doubleValue()*100)/100);
+        }
     }
 
     public void draw(Canvas canvas) {
@@ -113,7 +120,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         Paint paint = new Paint();
         paint.setColor(Color.rgb(0, 255, 0));
         canvas.drawCircle((float) posX, (float) posY, PLAYER_RADIUS, paint);
-
     }
 
     public void drawEnemies(Canvas canvas) {
@@ -125,12 +131,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void drawScoreAndMultiplier(Canvas canvas) {
         Paint paint = new Paint();
-        paint.setColor(Color.rgb(0,0,0));
+        paint.setColor(Color.rgb(255,0,0));
         paint.setTextSize(50);
         paint.setTextAlign(Paint.Align.RIGHT);
 
-        canvas.drawText(score+" pts", SCREEN_WIDTH-150, 60, paint);
-        canvas.drawText("x"+multiplier, SCREEN_WIDTH-20, 60, paint);
+        canvas.drawText(score.getScore()+" pts", SCREEN_WIDTH-20, 60, paint);
+        canvas.drawText("x"+ score.getMultiplier(), SCREEN_WIDTH-20, 120, paint);
     }
 
     @Override
@@ -178,4 +184,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void setSpeedY(float speedY) {
         this.speedY = speedY;
     }
+
+    public void setSoundLevel(int amplitudeDb) {
+        score.computeMultiplierFromSoundLevel(amplitudeDb);
+    }
+
 }

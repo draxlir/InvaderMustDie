@@ -50,9 +50,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private final Score score = new Score(null, 0, 1);
     private final Context mContext;
 
-    private Context mContext;
     private boolean gameOver = false;  
-    private Runnable mEnemySpawn= new Runnable() {
+
 
     private final Runnable mEnemySpawn= new Runnable() {
 

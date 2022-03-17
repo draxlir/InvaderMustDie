@@ -41,13 +41,12 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         gameView.setOnTouchListener(new OnSwipeTouchListener(this) {
             public void onSwipeUp() {
                 Handler handler = new Handler();
-                spellInvincible.setInvincible(true);
-                handler.postDelayed(() -> spellInvincible.setInvincible(false), spellInvincible.getLength());
+                spellInvincible.castSpell();
             }
             public void onSwipeRight() {
                 Handler handler = new Handler();
-                handler.postDelayed(() -> gameView.getEnemies().forEach((enemy) -> enemy.setSpeed(enemy.getSpeed() / spellFreeze.getFreezeStrength())), spellFreeze.getLength());
-            }
+                spellFreeze.castSpell(gameView.getEnemies());
+               }
             public void onSwipeLeft() {
                 Toast.makeText(GameActivity.this, "left", Toast.LENGTH_SHORT).show();
             }

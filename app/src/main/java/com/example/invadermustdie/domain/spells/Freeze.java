@@ -1,5 +1,9 @@
 package com.example.invadermustdie.domain.spells;
 
+import com.example.invadermustdie.domain.entities.Enemy;
+
+import java.util.List;
+
 public class Freeze extends Spell{
 
     private int freezeStrength = 2;
@@ -8,7 +12,8 @@ public class Freeze extends Spell{
         super(cooldown, length);
     }
 
-    public int getFreezeStrength() {
-        return freezeStrength;
+    public void castSpell(List<Enemy> enemies) {
+        enemies.forEach((enemy) -> enemy.setSpeed(enemy.getSpeed() / freezeStrength));
+        super.castSpell();
     }
 }

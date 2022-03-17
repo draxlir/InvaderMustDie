@@ -91,10 +91,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 if (gameActivity.getSpellInvincible().getActive()){
                     //add score
                     enemies.remove(enemy);
-                    System.out.println("Kill");
                 } else {
                     //afficher gameover
-                    System.out.println("Gameover");
                 }
             }
         }

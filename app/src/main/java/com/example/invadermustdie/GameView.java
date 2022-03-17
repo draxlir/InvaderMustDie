@@ -107,10 +107,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void gameOver(){
-        score = 99;
         SharedPreferences sharedPref = this.mContext.getSharedPreferences("settings",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt("score", score);
+        editor.putInt("score", score.getScore());
         editor.apply();
         Intent intent = new Intent(getContext(), GameOverActivity.class);
         mContext.startActivity(intent);

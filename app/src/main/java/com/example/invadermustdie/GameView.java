@@ -14,6 +14,7 @@ import com.example.invadermustdie.domain.Enemy;
 import com.example.invadermustdie.domain.Player;
 import com.example.invadermustdie.domain.Score;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -35,10 +36,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private float speedY = 0;
     private int delaySpawn = 5050;
 
-    private int light = 255;
-
     private List<Enemy> enemies = new ArrayList<>();
-
     private Player player = new Player((float) posX, (float) posY, PLAYER_RADIUS);
 
     private Score score = new Score(null, 0, 1);
@@ -80,31 +78,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         player.getCircle().setCenter((float) posX, (float) posY);
 
-        // Mise a jour transparence
-        for(Enemy enemy : enemies) {
-            enemy.setOpacity(light);
-            enemy.updateColor();
-        }
-
-        // Multiplier
-        switch (light) {
-            case 0:
-                    score.setMultiplier(10);
-                    break;
-            case 255:
-                    score.setMultiplier(1);
-                    break;
-            default:
-                    score.setMultiplier(linearInterpolation(light));
-        }
         score.updateScore();
-    }
-
-    // A refaire pour que ce soit propre
-    // cf https://fr.wikipedia.org/wiki/Interpolation_lin%C3%A9aire
-    private int linearInterpolation(int value) {
-        // f(20) = 10 & f(75) = 1
-        return (int) (-0.16F * value + 13.3F);
+        double multiplier = score.getMultiplier();
+        if(multiplier > 1) {
+            BigDecimal bd = new BigDecimal(multiplier);
+            BigDecimal bd2 = new BigDecimal("0.01");
+            score.setMultiplier((double) Math.round(bd.subtract(bd2).doubleValue()*100)/100);
+        }
     }
 
     public void draw(Canvas canvas) {
@@ -141,8 +121,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         paint.setTextSize(50);
         paint.setTextAlign(Paint.Align.RIGHT);
 
-        canvas.drawText(score.getScore()+" pts", SCREEN_WIDTH-150, 60, paint);
-        canvas.drawText("x"+ score.getMultiplier(), SCREEN_WIDTH-20, 60, paint);
+        canvas.drawText(score.getScore()+" pts", SCREEN_WIDTH-20, 60, paint);
+        canvas.drawText("x"+ score.getMultiplier(), SCREEN_WIDTH-20, 120, paint);
     }
 
     @Override
@@ -191,7 +171,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         this.speedY = speedY;
     }
 
-    public void setLuminosityThreshold(int light) {
-        this.light = light;
+    public void setSoundLevel(int amplitudeDb) {
+        score.computeMultiplierFromSoundLevel(amplitudeDb);
     }
+
 }

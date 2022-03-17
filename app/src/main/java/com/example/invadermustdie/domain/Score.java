@@ -3,9 +3,9 @@ package com.example.invadermustdie.domain;
 public class Score {
     private String date;
     private int score;
-    private int multiplier;
+    private double multiplier;
 
-    private static final int addingValue = 10;
+    private static final int addingValue = 2;
 
     @Override
     public String toString() {
@@ -15,7 +15,7 @@ public class Score {
                 ;
     }
 
-    public Score(String date, int score, int multiplier) {
+    public Score(String date, int score, float multiplier) {
         this.date= date;
         this.score = score;
         this.multiplier = multiplier;
@@ -37,17 +37,27 @@ public class Score {
         return score;
     }
 
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public int getMultiplier() {
+    public double getMultiplier() {
         return multiplier;
     }
 
-    public void setMultiplier(int multiplier) {
+    public void setMultiplier(double multiplier) {
         this.multiplier = multiplier;
     }
+
+    public void computeMultiplierFromSoundLevel(int amplitudeDb) {
+        System.out.println("amplitude " + amplitudeDb);
+        if (multiplier == 1) {
+            if(amplitudeDb >= 70 && amplitudeDb <= 100) {
+                multiplier = 0.1 * amplitudeDb -5;
+            } else if (amplitudeDb >= 100) {
+                multiplier = 5;
+            }
+            multiplier = (double) Math.round(multiplier * 100) / 100;
+            System.out.println(multiplier);
+        }
+    }
+
 }
 
 

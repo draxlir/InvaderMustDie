@@ -38,4 +38,8 @@ public final class Constants {
     public static final int AMPLITUDE_CHECK_PERIOD = 1000;
 
     public static final float ACCELEROMETER_OFFSET = 4.25f;
+
+    public static final int REGULAR_ENEMY_SPEED = 3;
+    public static final int REGULAR_PLAYER_SPEED = 5;
+
 }

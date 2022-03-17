@@ -30,6 +30,10 @@ public class Score {
         score += addingValue*multiplier;
     }
 
+    public void addScore(int value) {
+        this.score += value;
+    }
+
     public String getDate() {
         return date;
     }

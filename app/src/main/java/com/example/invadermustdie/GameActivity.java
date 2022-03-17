@@ -78,28 +78,28 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         gameView.setOnTouchListener(new OnSwipeTouchListener(this) {
             public void onSwipeUp() {
                 //temp
-                if (!spellInvincible.getAvailable()) {
+                if (!spellInvincible.isAvailable()) {
                     Toast.makeText(GameActivity.this, "In cooldown", Toast.LENGTH_SHORT).show();
                 }
                 spellInvincible.castSpell();
             }
             public void onSwipeRight() {
                 //temp
-                if (!spellFreeze.getAvailable()) {
+                if (!spellFreeze.isAvailable()) {
                     Toast.makeText(GameActivity.this, "In cooldown", Toast.LENGTH_SHORT).show();
                 }
                 spellFreeze.castSpell(gameView.getEnemies());
             }
             public void onSwipeLeft() {
                 //temp
-                if (!spellMeteor.getAvailable()) {
+                if (!spellMeteor.isAvailable()) {
                     Toast.makeText(GameActivity.this, "In cooldown", Toast.LENGTH_SHORT).show();
                 }
                 spellMeteor.castSpell(gameView.getSCREEN_HEIGHT(), gameView.getSCREEN_WIDTH());
             }
             public void onSwipeDown() {
                 //temp
-                if (!spellExplosion.getAvailable()) {
+                if (!spellExplosion.isAvailable()) {
                     Toast.makeText(GameActivity.this, "In cooldown", Toast.LENGTH_SHORT).show();
                 }
                 spellExplosion.castSpell(gameView.getPlayer().getX(), gameView.getPlayer().getY());

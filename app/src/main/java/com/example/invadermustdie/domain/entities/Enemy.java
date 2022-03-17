@@ -2,6 +2,8 @@ package com.example.invadermustdie.domain.entities;
 
 import android.graphics.Color;
 
+import com.example.invadermustdie.domain.Constants;
+
 public class Enemy extends Entity{
 
     private double lifetime;
@@ -10,7 +12,7 @@ public class Enemy extends Entity{
 
     public Enemy(float x, float y, int radius) {
         super(x, y, radius);
-        this.speed = 3;
+        this.speed = Constants.REGULAR_ENEMY_SPEED;
         this.lifetime = 0;
         this.color.setColor(Color.argb(opacity, 255, 0, 0));
     }

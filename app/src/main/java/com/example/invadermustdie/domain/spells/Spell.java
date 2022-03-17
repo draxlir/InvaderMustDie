@@ -14,11 +14,11 @@ public abstract class Spell {
         this.length = length;
     }
 
-    public boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 
-    public boolean getAvailable() {
+    public boolean isAvailable() {
         return available;
     }
 

@@ -38,7 +38,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private final int SCREEN_WIDTH = this.getResources().getDisplayMetrics().widthPixels;
     private final int SCREEN_HEIGHT = this.getResources().getDisplayMetrics().heightPixels;
 
-    private GameActivity gameActivity;
+    private final GameActivity gameActivity;
 
     private float speedX = 0;
     private float speedY = 0;
@@ -65,7 +65,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 enemyX = rnd.nextInt(SCREEN_HEIGHT);
                 enemyY = rnd.nextInt(SCREEN_WIDTH);
             }
-            enemies.add(new Enemy((float) enemyX, (float) enemyY, Constants.ENEMY_RADIUS));
+            Enemy enemy = new Enemy((float) enemyX, (float) enemyY, Constants.ENEMY_RADIUS);
+            if(gameActivity.getSpellFreeze().isActive()){
+                enemy.setSpeed(enemy.getSpeed() / Constants.FREEZE_STRENGTH);
+            }
+            enemies.add(enemy);
             delaySpawn = delaySpawn - Constants.SPAWN_ACCELERATION;
             mHandlerEnemySpawn.postDelayed(mEnemySpawn, Math.max(delaySpawn, Constants.MIN_SPAWN_DELAY));
         }
@@ -100,12 +104,35 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             BigDecimal bd2 = new BigDecimal("0.01");
             score.setMultiplier((double) Math.round(bd.subtract(bd2).doubleValue()*100)/100);
         }
+
+        for (Enemy enemy : enemies) {
+            if (CirclesCollisionManager.isColliding(player.getCircle(), enemy.getCircle())) {
+                if (gameActivity.getSpellInvincible().isActive()){
+                    killEnemy(enemy);
+                } else {
+                    gameOver();
+                }
+            }
+            if (gameActivity.getSpellExplosion().isActive()){
+                if (CirclesCollisionManager.isColliding(gameActivity.getSpellExplosion().getCircle(), enemy.getCircle()) && gameActivity.getSpellExplosion().isActive()) {
+                    killEnemy(enemy);
+                }
+            }
+
+            if (gameActivity.getSpellMeteor().isActive()) {
+                for (Circle meteor : gameActivity.getSpellMeteor().getMeteors()) {
+                    if (CirclesCollisionManager.isColliding(meteor, enemy.getCircle())) {
+                        killEnemy(enemy);
+                    }
+                }
+            }
+        }
     }
 
     public void draw(Canvas canvas) {
         super.draw(canvas);
         canvas.drawColor(Color.WHITE);
-        if (gameActivity.getSpellFreeze().getActive()) {
+        if (gameActivity.getSpellFreeze().isActive()) {
             canvas.drawColor(Color.CYAN);
         }
         if(canvas != null) {
@@ -113,26 +140,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             drawPlayer(canvas);
             drawEnemies(canvas);
             drawScoreAndMultiplier(canvas);
-        }
-        for (Enemy enemy : enemies) {
-            if (CirclesCollisionManager.isColliding(player.getCircle(), enemy.getCircle())) {
-                if (gameActivity.getSpellInvincible().getActive()){
-                    //add score
-                    enemies.remove(enemy);
-                } else {
-                    gameOver();
-                }
-            }
-            if (CirclesCollisionManager.isColliding(gameActivity.getSpellExplosion().getCircle(), enemy.getCircle()) && gameActivity.getSpellExplosion().getActive()) {
-                enemies.remove(enemy);
-            }
-            if (gameActivity.getSpellMeteor().getActive()) {
-                for (Circle meteor : gameActivity.getSpellMeteor().getMeteors()) {
-                    if (CirclesCollisionManager.isColliding(meteor, enemy.getCircle())) {
-                        enemies.remove(enemy);
-                    }
-                }
-            }
         }
     }
 
@@ -154,7 +161,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void drawPlayer(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.rgb(0, 255, 0));
-        if (gameActivity.getSpellInvincible().getActive()) {
+        if (gameActivity.getSpellInvincible().isActive()) {
             paint.setColor(Color.rgb(255, 150, 150));
         }
         canvas.drawCircle(player.getX(), player.getY(), Constants.PLAYER_RADIUS, paint);
@@ -179,12 +186,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void drawSpells(Canvas canvas) {
-        if (gameActivity.getSpellExplosion().getActive()) {
+        if (gameActivity.getSpellExplosion().isActive()) {
             Paint paint = new Paint();
             paint.setColor(Color.rgb(255, 255, 0));
             canvas.drawCircle(gameActivity.getSpellExplosion().getX(), gameActivity.getSpellExplosion().getY(), Constants.EXPLOSION_RADIUS, paint);
         }
-        if (gameActivity.getSpellMeteor().getActive()) {
+        if (gameActivity.getSpellMeteor().isActive()) {
             Paint paint = new Paint();
             paint.setColor(Color.rgb(120,120,40));
             for (Circle meteor : gameActivity.getSpellMeteor().getMeteors()) {
@@ -230,6 +237,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private boolean posInRadius(double posXtoCheck, double posYtoCheck, double posXRadius, double posYRadius, double radius) {
         double distance = Math.sqrt(Math.pow(posXtoCheck-posXRadius, 2) + Math.pow(posYtoCheck-posYRadius, 2));
         return distance < radius;
+    }
+
+    private void killEnemy(Enemy enemy) {
+        enemies.remove(enemy);
+        score.addScore(50);
     }
 
     public void setSpeedX(float speedX) {

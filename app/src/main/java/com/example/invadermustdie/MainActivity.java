@@ -5,12 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.invadermustdie.domain.Score;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -24,12 +28,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         getSupportActionBar().hide(); // hide top bar
+        setContentView(R.layout.activity_main);
+
         ListView listView = (ListView)findViewById(R.id.listView);
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+        // Write a message to the database
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://invadermustdie-default-rtdb.europe-west1.firebasedatabase.app/");
+        DatabaseReference myRef = database.getReference("message");
+
+
 
         //Meilleurs scores
         Score s1 = new Score(formatter.format(date), 34, 3);
@@ -49,13 +63,15 @@ public class MainActivity extends AppCompatActivity {
                 return s2.getScore() - s1.getScore();
             }
         });
+
+        myRef.setValue(history);
+
         PersonListAdapter adapter = new PersonListAdapter(this, R.layout.row_history_layout, history);
 
         listView.setAdapter(adapter);
     }
 
     public void clickStart(View v){
-        Toast.makeText(this,"ClickedButton", Toast.LENGTH_LONG).show(); // TODO Start Game
         Intent intent = new Intent(this, GameActivity.class);
         startActivity(intent);
     }

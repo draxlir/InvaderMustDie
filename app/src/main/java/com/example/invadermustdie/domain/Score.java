@@ -24,6 +24,8 @@ public class Score {
         this.multiplier = multiplier;
     }
 
+    public Score(){}
+
     public void updateScore() {
         score += addingValue*multiplier;
     }

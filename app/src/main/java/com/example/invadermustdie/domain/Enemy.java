@@ -3,47 +3,35 @@ package com.example.invadermustdie.domain;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-public class Enemy {
+public class Enemy extends Entity{
 
-    private float posX;
-    private float posY;
-    private float speed;
     private double lifetime;
-    private Paint color = new Paint();
 
-    public Enemy(float x, float y) {
-        this.posX = x;
-        this.posY = y;
+    public Enemy(float x, float y, int radius) {
+        super(x, y, radius);
         this.speed = 3;
         this.lifetime = 0;
         this.color.setColor(Color.rgb(255,0,0));
     }
 
-    public float getX() {
-        return posX;
-    }
 
-    public float getY() {
-        return posY;
-    }
-
-    public Paint getColor() {
-        return color;
-    }
 
     public void updatePos(double playerX, double playerY) {
-        if (posX < playerX) {
-            posX = posX+speed;
+        float newX = 0;
+        float newY = 0;
+        if (this.circle.getCenter().x < playerX) {
+            newX = this.circle.getCenter().x + speed;
         }
-        if (posX > playerX) {
-            posX = posX-speed;
+        if (this.circle.getCenter().x > playerX) {
+            newX = this.circle.getCenter().x - speed;
         }
-        if (posY < playerY) {
-            posY = posY+speed;
+        if (this.circle.getCenter().y < playerY) {
+            newY = this.circle.getCenter().y + speed;
         }
-        if (posY > playerY) {
-            posY = posY-speed;
+        if (this.circle.getCenter().y > playerY) {
+            newY = this.circle.getCenter().y - speed;
         }
+        circle.setCenter(newX, newY);
         lifetime++;
         // if lifetime > valeur, then speed increase
     }

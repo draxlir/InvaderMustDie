@@ -87,8 +87,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         for (Enemy enemy : enemies) {
             if (CirclesCollisionManager.isColliding(player.getCircle(), enemy.getCircle())) {
                 GameActivity gameActivity = (GameActivity) getContext();
-                System.out.println(gameActivity.getIsInvincible());
-                if (gameActivity.getIsInvincible()){
+                System.out.println(gameActivity.getSpellInvincible().getActive());
+                if (gameActivity.getSpellInvincible().getActive()){
                     //add score
                     enemies.remove(enemy);
                     System.out.println("Kill");

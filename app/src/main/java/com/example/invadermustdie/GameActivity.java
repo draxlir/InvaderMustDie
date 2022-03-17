@@ -94,7 +94,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         return spellExplosion;
     }
 
-    public boolean getIsInvincible() {
-        return spellInvincible.isInvincible();
+    public Invincible getSpellInvincible() {
+        return spellInvincible;
     }
 }
